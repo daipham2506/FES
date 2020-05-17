@@ -1,0 +1,7 @@
+.ant-upload-list{
+  text-align: left;
+}
+
+.hidden .ant-upload-list{
+  display: none;
+}

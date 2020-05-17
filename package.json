@@ -1,20 +1,28 @@
 {
-  "name": "client",
+  "name": "file-encrypt",
   "version": "0.1.0",
-  "private": true,
+  "main": "index.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "antd": "^4.2.2",
+    "axios": "^0.19.2",
+    "cross-env": "^7.0.2",
+    "electron-is-dev": "^1.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start-react": "cross-env BROWSER=none react-scripts start",
+    "server": "cd server && yarn start",
+    "react-build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-build": "electron-builder",
+    "build": "npm run react-build && npm run electron-build",
+    "start": "concurrently 'yarn run server' 'yarn run start-react' 'wait-on http://localhost:3000 && electron .' "
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,5 +38,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "proxy": "http://localhost:5053",
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "electron": "^8.3.0",
+    "electron-builder": "^22.6.0",
+    "wait-on": "^5.0.0"
   }
 }
