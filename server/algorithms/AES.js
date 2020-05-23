@@ -26,7 +26,7 @@ class CryptAES {
         if (!AES.Modes.hasOwnProperty(mode)) {
             throw Error(mode + ' is not supported!')
         }
-        if (AES.Sizes.indexOf(size) == -1) {
+        if (AES.Sizes.indexOf(size) === -1) {
             throw Error('Invalid key size!')
         }
         this._keyLen = size / 8;
@@ -47,10 +47,9 @@ class CryptAES {
      * 
      * @param {String} path The file path.
      * @param {String} keyPath the key file path
-     * @param {String} outPath The output path
      * @return {String} The new file path.
      */
-    encryptFile(path, keyPath, outPath) {
+    encryptFile(path, keyPath) {
         const salt = randomBytes(saltLen);
         const iv = randomBytes(ivLen);
         try {
@@ -60,9 +59,7 @@ class CryptAES {
             const aes = cipher.call(this, aesKey, iv, AES.Encrypt);
             const hmac = crypto.createHmac('sha256', macKey);
 
-            const arrPath = path.split("/");
-            const nameFile = arrPath[arrPath.length - 1];
-            const newPath = outPath + '/' + nameFile + '.enc';
+            const newPath = path + '.aes_enc';
             const fd = fs.openSync(newPath, 'w');
             const chunks = fileChunks(path);
 
@@ -101,10 +98,9 @@ class CryptAES {
      * 
      * @param {String} path The file path.
      * @param {String} keyPath the key file path
-     * @param {String} outPath The output path
      * @return {String} The new file path.
      */
-    decryptFile(path, keyPath, outPath) {
+    decryptFile(path, keyPath) {
         try {
             const salt = Buffer.alloc(saltLen);
             const iv = Buffer.alloc(ivLen);
@@ -123,10 +119,7 @@ class CryptAES {
             verifyFile(path, mac, macKey);
 
             const aes = cipher.call(this, aesKey, iv, AES.Decrypt);
-            const pathRep = path.replace(/\.enc$/, '');
-            const arrPath = pathRep.split("/");
-            const nameFile = arrPath[arrPath.length - 1];
-            const newPath = outPath + '/' + nameFile;
+            const newPath = path.replace(/\.aes_enc$/, '.aes');
             fd = fs.openSync(newPath, 'w');
             const chunks = fileChunks(path, saltLen + ivLen, macLen);
             do {

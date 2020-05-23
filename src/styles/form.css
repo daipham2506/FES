@@ -1,7 +1,13 @@
-.ant-upload-list{
+.ant-upload-list, .ant-list-item-meta-title{
   text-align: left;
 }
 
 .hidden .ant-upload-list{
   display: none;
+}
+
+.result{
+  background-color: rgba(63, 167, 236, 0.431);
+  padding: 10px;
+  padding-left: 20px;
 }

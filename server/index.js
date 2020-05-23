@@ -7,7 +7,7 @@ app.use(express.json({ extended: false}))
 
 
 // Define Route
-app.use('/api/aes', require('./routes/api/aes'))
+app.use('/api/crypt', require('./routes/api/crypt'));
 
 const PORT = process.env.PORT || 5053
 
