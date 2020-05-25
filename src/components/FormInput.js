@@ -14,7 +14,7 @@ import {
   Input
 } from 'antd';
 
-import { LockFilled, AndroidOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
+import { LockFilled, CheckCircleOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
 
 import '../styles/form.css'
 
@@ -28,6 +28,7 @@ const { TextArea } = Input;
 const FormInput = () => {
 
   const [loading, setloading] = useState(false)
+  const [totalTime, setTotalTime] = useState(0)
 
   const [form, setform] = useState({
     fileList: [],
@@ -74,7 +75,8 @@ const FormInput = () => {
       message.success(`${info.file.name} file uploaded successfully.`);
       let pathList = []
       for (let i = 0; i < info.fileList.length; i++) {
-        pathList.push(info.fileList[i].originFileObj.path)
+        if(!pathList.includes(info.fileList[i].originFileObj.path))
+          pathList.push(info.fileList[i].originFileObj.path)
       }
       setform({
         ...form,
@@ -131,8 +133,13 @@ const FormInput = () => {
         mode: form.mode,
         algo: form.algo
       }
+      let time = (new Date()).getTime();
 
       const res = await callApi('/api/crypt', 'POST', data);
+
+      let time2 = (new Date()).getTime();
+
+      setTotalTime(time2 - time);
       setloading(false)
 
       setform({
@@ -162,7 +169,7 @@ const FormInput = () => {
       }
 
       const res = await callApi('/api/integrity', 'POST', data);
-      
+
       setloading(false)
 
       setformCheck({
@@ -279,19 +286,25 @@ const FormInput = () => {
               {form.result.length > 0 &&
                 <Form.Item style={{ justifyContent: 'center' }}>
                   <Row className='result'>
+                    <h6 > The Path contain file after {form.mode === "enc" ? "encrypted" : "decrypted"}</h6>
+                  </Row>
+                  <Row className='result'>
                     <List
                       itemLayout="horizontal"
                       dataSource={form.result}
                       renderItem={item => (
                         <List.Item>
-                          <List.Item.Meta
+                          <List.Item.Meta style={{ textAlign: "left" }}
                             avatar={<Avatar src="https://png.pngtree.com/png-clipart/20190516/original/pngtree-folder-vector-icon-png-image_3725290.jpg" />}
-                            title={<span style={{ textAlign: "left" }}>{item.name} </span>}
+                            title={<span >{item.name} </span>}
                             description={"Path:  " + item.path}
                           />
                         </List.Item>
                       )}
                     />
+                  </Row>
+                  <Row className='result'>
+                    <h6> Total time: {totalTime} miliseconds</h6>
                   </Row>
                 </Form.Item>
               }
@@ -303,7 +316,7 @@ const FormInput = () => {
       <TabPane
         tab={
           <span style={{ paddingLeft: 20, paddingRight: 20 }}>
-            <AndroidOutlined />
+            <CheckCircleOutlined />
               Checksum
             </span>
         }
@@ -380,7 +393,7 @@ const FormInput = () => {
                 <Form.Item
                   label="Hash code of original file"
                 >
-                  <TextArea rows={4} value={formCheck.hashOri} style={{ color: 'green', fontSize:18 }} />
+                  <TextArea rows={4} value={formCheck.hashOri} style={{ color: 'green', fontSize: 18 }} />
                 </Form.Item>
               }
 
@@ -388,7 +401,7 @@ const FormInput = () => {
                 <Form.Item
                   label="Hash code of decrypted file"
                 >
-                  <TextArea rows={4} value={formCheck.hashDec} style={{ color: 'green', fontSize:18 }} />
+                  <TextArea rows={4} value={formCheck.hashDec} style={{ color: 'green', fontSize: 18 }} />
                 </Form.Item>
               }
 
