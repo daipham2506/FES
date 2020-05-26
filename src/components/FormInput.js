@@ -11,7 +11,8 @@ import {
   List,
   Avatar,
   Spin,
-  Input
+  Input,
+  Switch
 } from 'antd';
 
 import { LockFilled, CheckCircleOutlined, InboxOutlined, UploadOutlined } from '@ant-design/icons';
@@ -29,6 +30,7 @@ const FormInput = () => {
 
   const [loading, setloading] = useState(false)
   const [totalTime, setTotalTime] = useState(0)
+  const [onDir, setOnDir] = useState(false)
 
   const [form, setform] = useState({
     fileList: [],
@@ -75,7 +77,7 @@ const FormInput = () => {
       message.success(`${info.file.name} file uploaded successfully.`);
       let pathList = []
       for (let i = 0; i < info.fileList.length; i++) {
-        if(!pathList.includes(info.fileList[i].originFileObj.path))
+        if (!pathList.includes(info.fileList[i].originFileObj.path))
           pathList.push(info.fileList[i].originFileObj.path)
       }
       setform({
@@ -192,7 +194,7 @@ const FormInput = () => {
   }
 
   return (
-    <Tabs defaultActiveKey="1"
+    <Tabs defaultActiveKey={"1"}
       style={{ textAlign: "center" }}>
       <TabPane
         tab={
@@ -217,12 +219,19 @@ const FormInput = () => {
                 name='filePath'
                 rules={[{ required: true, message: 'Please input your file!' }]}
               >
+                <div style={{ textAlign: 'left', margin: '10px 0' }}>
+                  <h6 style={{ display: 'inline' }}> Turn on to choose all files from directory</h6>
+                  <Switch style={{ marginLeft: 10 }}
+                    onChange={e => setOnDir(e)}
+                  />
+                </div>
                 <Dragger
                   name="file"
                   multiple={true}
                   action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
                   onChange={onChange}
                   onRemove={onRemove}
+                  directory={onDir}
                 >
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
@@ -276,11 +285,9 @@ const FormInput = () => {
                 </Select>
               </Form.Item>
 
-              <Form.Item style={{ justifyContent: 'center' }}>
-                <Row >
+              <Form.Item style={{ justifyContent: 'center', marginTop:10 }}>
                   <Button type='primary' htmlType="submit" style={{ width: 100 }} > Perform! </Button>
-                  <Button style={{ marginLeft: 30, width: 100 }} onClick={() => { window.location.reload(); }}> Reset </Button>
-                </Row>
+                  <Button style={{ marginLeft: 30, width: 100 }} onClick={() => window.location.reload()}> Reset </Button>
               </Form.Item>
 
               {form.result.length > 0 &&
@@ -386,7 +393,12 @@ const FormInput = () => {
 
 
               <Form.Item style={{ justifyContent: 'center' }}>
-                <Button type='primary' htmlType="submit" style={{ marginLeft: -20, marginTop: 10 }}> Compare </Button>
+                <Button type='primary' htmlType="submit" style={{ width: 100, marginLeft: -20, marginTop: 10 }}> Compare </Button>
+                <Button style={{ width: 100, marginLeft: 20, marginTop: 10 }}
+                  onClick={() => {
+                    window.location.reload();       
+                  }}
+                > Reset </Button>
               </Form.Item>
 
               {formCheck.hashOri && formCheck.hashDec &&
