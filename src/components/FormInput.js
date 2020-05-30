@@ -34,7 +34,7 @@ const FormInput = () => {
 
   const [form, setform] = useState({
     fileList: [],
-    keyList: [],
+    keyPath: '',
     algo: '',
     mode: '',
     result: []
@@ -57,6 +57,11 @@ const FormInput = () => {
       setformCheck({
         ...formCheck,
         decryptedFile: file
+      })
+    } else if (type === "key") {
+      setform({
+        ...form,
+        keyPath: file.path
       })
     }
   }
@@ -89,26 +94,6 @@ const FormInput = () => {
     }
   }
 
-  const onAddKey = file => {
-    if (form.keyList.length === 1) {
-      message.error('Only one key file is needed to decrypt/encrypt');
-      return false;
-    }
-
-    setform({
-      ...form,
-      keyList: [file]
-    })
-    return false;
-  };
-
-  const onRemoveKey = key => {
-    setform({
-      ...form,
-      keyList: []
-    })
-  };
-
   const onChangeSelect = (e, k) => {
     setform({
       ...form,
@@ -131,7 +116,7 @@ const FormInput = () => {
     try {
       let data = {
         fileList: form.fileList,
-        keyPath: form.keyList[0].path,
+        keyPath: form.keyPath,
         mode: form.mode,
         algo: form.algo
       }
@@ -214,17 +199,23 @@ const FormInput = () => {
               size='large'
               onFinish={onFinish}
             >
+              <Row>
+                <Col span={5} />
+                <Col span={19}>
+                  <div style={{ textAlign: 'left', margin: '10px 0' }}>
+                    <h6 style={{ display: 'inline' }}> Turn on to choose all files from directory</h6>
+                    <Switch style={{ marginLeft: 10 }}
+                      onChange={e => setOnDir(e)}
+                    />
+                  </div>
+                </Col>
+              </Row>
+
               <Form.Item
                 label="Input Files"
                 name='filePath'
                 rules={[{ required: true, message: 'Please input your file!' }]}
               >
-                <div style={{ textAlign: 'left', margin: '10px 0' }}>
-                  <h6 style={{ display: 'inline' }}> Turn on to choose all files from directory</h6>
-                  <Switch style={{ marginLeft: 10 }}
-                    onChange={e => setOnDir(e)}
-                  />
-                </div>
                 <Dragger
                   name="file"
                   multiple={true}
@@ -238,42 +229,44 @@ const FormInput = () => {
                   </p>
                   <p className="ant-upload-text">Click or drag file to this area to upload</p>
                   <p className="ant-upload-hint">
-                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                    band files
+                    Support to upload one or more different files or all files from a directory.
                 </p>
                 </Dragger>
               </Form.Item>
 
               <Form.Item
                 label="Key File"
-                name='keyList'
+                name="keyPath"
                 rules={[{ required: true, message: 'Please choose key file!' }]}
               >
-                <Dragger
-                  name="file"
-                  multiple={false}
-                  action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
-                  accept=".doc,.docx,application/msword,.txt"
-                  fileList={form.keyList}
-                  beforeUpload={onAddKey}
-                  onRemove={onRemoveKey}
-                >
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                </Dragger>
+                <Row>
+                  <Col span={20}>
+                    <Input value={form.keyPath} disabled style={{ color: 'blue' }} />
+                  </Col>
+                  <Col span={4} >
+                    <Upload
+                      className='hidden'
+                      multiple={false}
+                      name="file"
+                      action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
+                      accept=".doc,.docx,application/msword,.txt"
+                      beforeUpload={file => beforeUpload(file, "key")}
+                    >
+                      <Button style={{ marginLeft: 5 }}>
+                        <UploadOutlined /> Browser
+                      </Button>
+                    </Upload>
+                  </Col>
+                </Row>
               </Form.Item>
 
               <Form.Item label="Algorithm" name='algo'
                 rules={[{ required: true, message: 'Please select algorithm!' }]}
               >
-
                 <Select placeholder="Select a algorithm" onChange={e => onChangeSelect(e, "algo")}>
                   <Select.Option value="aes">AES</Select.Option>
                   <Select.Option value="rsa">RSA</Select.Option>
                 </Select>
-
               </Form.Item>
 
               <Form.Item label="Mode" name='mode'
@@ -285,9 +278,9 @@ const FormInput = () => {
                 </Select>
               </Form.Item>
 
-              <Form.Item style={{ justifyContent: 'center', marginTop:10 }}>
-                  <Button type='primary' htmlType="submit" style={{ width: 100 }} > Perform! </Button>
-                  <Button style={{ marginLeft: 30, width: 100 }} onClick={() => window.location.reload()}> Reset </Button>
+              <Form.Item style={{ justifyContent: 'center', marginTop: 10 }}>
+                <Button type='primary' htmlType="submit" style={{ width: 100 }} > Perform! </Button>
+                <Button style={{ marginLeft: 30, width: 100 }} onClick={() => window.location.reload()}> Reset </Button>
               </Form.Item>
 
               {form.result.length > 0 &&
@@ -396,7 +389,7 @@ const FormInput = () => {
                 <Button type='primary' htmlType="submit" style={{ width: 100, marginLeft: -20, marginTop: 10 }}> Compare </Button>
                 <Button style={{ width: 100, marginLeft: 20, marginTop: 10 }}
                   onClick={() => {
-                    window.location.reload();       
+                    window.location.reload();
                   }}
                 > Reset </Button>
               </Form.Item>
