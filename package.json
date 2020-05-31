@@ -22,7 +22,10 @@
     "eject": "react-scripts eject",
     "electron-build": "electron-builder",
     "build": "npm run react-build && npm run electron-build",
-    "start": "concurrently 'yarn run server' 'yarn run start-react' 'wait-on http://localhost:3000 && electron .' "
+    "start": "concurrently 'yarn run server' 'yarn run start-react' 'wait-on http://localhost:3000 && electron .' ",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"File Encrypt\"",
+    "package-linux": "electron-packager . MyApp --overwrite  --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -44,6 +47,7 @@
     "concurrently": "^5.2.0",
     "electron": "^8.3.0",
     "electron-builder": "^22.6.0",
+    "electron-packager": "^14.2.1",
     "wait-on": "^5.0.0"
   }
 }
