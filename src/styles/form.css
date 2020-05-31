@@ -2,6 +2,10 @@
   text-align: left;
 }
 
+.ant-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+  justify-content: center;
+}
+
 .hidden .ant-upload-list{
   display: none;
 }
