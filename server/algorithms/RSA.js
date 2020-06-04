@@ -44,7 +44,15 @@ class CryptRSA {
       const file = fs.readFileSync(filePath);
       const decryptedFile = key.decrypt(file);
 
-      const newPath = filePath.replace(/\.rsa_enc$/, '.rsa');
+      let path = filePath.replace(/\.rsa_enc$/, '');
+      path = path.split('.');
+
+      let newPath ="";
+      for(let i=0;i< path.length - 1 ;i++){
+        newPath += path[i];
+      }
+      newPath = newPath + "_rsa." + path[path.length-1];
+
       fs.writeFileSync(newPath, decryptedFile);
 
       return newPath

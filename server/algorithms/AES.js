@@ -119,7 +119,15 @@ class CryptAES {
             verifyFile(path, mac, macKey);
 
             const aes = cipher.call(this, aesKey, iv, AES.Decrypt);
-            const newPath = path.replace(/\.aes_enc$/, '.aes');
+            let pathFile = path.replace(/\.aes_enc$/, '');
+            pathFile = pathFile.split('.');
+
+            let newPath = "";
+            for (let i = 0; i < pathFile.length - 1; i++) {
+                newPath += pathFile[i];
+            }
+            newPath = newPath + "_aes." + pathFile[pathFile.length - 1];
+
             fd = fs.openSync(newPath, 'w');
             const chunks = fileChunks(path, saltLen + ivLen, macLen);
             do {
